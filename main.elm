@@ -25,7 +25,8 @@ data = encode 0 <| object [
     ]
 
 options = encode 0 <| object [
-           ("barShowStroke", bool False)
+             ("bezierCurve", bool False)
+           , ("barShowStroke", bool False)
           ]
 -- data = {
 --       labels = ["January","February","March","April","May","June","July"],
@@ -49,5 +50,6 @@ options = encode 0 <| object [
 
 main =
     let b = Debug.log "data" data
-        c = Chart.bar chrt b options
+        c = Chart.radar chrt b options
+--         c = Chart.bar chrt b options
     in plainText <| "hoge"

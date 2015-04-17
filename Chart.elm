@@ -1,4 +1,4 @@
-module Chart ( chart, bar ) where
+module Chart ( chart, line, bar, radar ) where
 
 {-| Library for working with Charts. Email the mailing list if you encounter
 issues with internationalization or locale formatting.
@@ -17,5 +17,11 @@ type Chart = Chart
 chart : String -> Chart
 chart = Native.Chart.chart
 
+line : Chart -> String -> String -> Chart
+line = Native.Chart.line
+
 bar : Chart -> String -> String -> Chart
 bar = Native.Chart.bar
+
+radar : Chart -> String -> String -> Chart
+radar = Native.Chart.radar
