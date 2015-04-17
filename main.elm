@@ -23,6 +23,10 @@ data = encode 0 <| object [
        ]]
       )
     ]
+
+options = encode 0 <| object [
+           ("barShowStroke", bool False)
+          ]
 -- data = {
 --       labels = ["January","February","March","April","May","June","July"],
 --       datasets = [
@@ -45,5 +49,5 @@ data = encode 0 <| object [
 
 main =
     let b = Debug.log "data" data
-        c = Chart.bar chrt b
+        c = Chart.bar chrt b options
     in plainText <| "hoge"

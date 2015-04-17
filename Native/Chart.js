@@ -15,16 +15,16 @@ Elm.Native.Chart.make = function(localRuntime) {
         return new Chart(e);
     }
 
-    function bar(chart, data)
+    function bar(chart, data, options)
     {
-        chart.Bar(JSON.parse(data), { responsive : true });
+        chart.Bar(JSON.parse(data), JSON.parse(options));
 
         return chart;
     }
 
     return localRuntime.Native.Chart.values = {
         chart : chart,
-        bar : F2(bar)
+        bar : F3(bar)
     };
 
 };
