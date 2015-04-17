@@ -31,7 +31,7 @@ type Chart = Chart
 chart : String -> Chart
 chart = Native.Chart.chart
 
-bar : Chart -> List a -> Chart
+bar : Chart -> a -> Chart
 bar = Native.Chart.bar
 
 {-| Attempt to read a Chart from a string.
