@@ -33,11 +33,32 @@ Elm.Native.Chart.make = function(localRuntime) {
         return chart;
     }
 
+    function polarArea(chart, data, options)
+    {
+        chart.PolarArea(JSON.parse(data), JSON.parse(options));
+        return chart;
+    }
+
+    function pie(chart, data, options)
+    {
+        chart.Pie(JSON.parse(data), JSON.parse(options));
+        return chart;
+    }
+
+    function doughnut(chart, data, options)
+    {
+        chart.Doughnut(JSON.parse(data), JSON.parse(options));
+        return chart;
+    }
+
     return localRuntime.Native.Chart.values = {
         chart : chart,
         line : F3(line),
         bar : F3(bar),
         radar : F3(radar),
+        polarArea : F3(polarArea),
+        pie : F3(pie),
+        doughnut : F3(doughnut),
     };
 
 };

@@ -1,4 +1,4 @@
-module Chart ( chart, line, bar, radar ) where
+module Chart ( chart, line, bar, radar, polarArea, pie, doughnut ) where
 
 {-| Library for working with Charts. Email the mailing list if you encounter
 issues with internationalization or locale formatting.
@@ -25,3 +25,12 @@ bar = Native.Chart.bar
 
 radar : Chart -> String -> String -> Chart
 radar = Native.Chart.radar
+
+polarArea : Chart -> String -> String -> Chart
+polarArea = Native.Chart.polarArea
+
+pie : Chart -> String -> String -> Chart
+pie = Native.Chart.pie
+
+doughnut : Chart -> String -> String -> Chart
+doughnut = Native.Chart.doughnut
