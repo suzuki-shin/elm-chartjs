@@ -11,22 +11,22 @@ type Chart = Chart
 chart : String -> Chart
 chart = Native.Chart.chart
 
-line : Chart -> DataType1 -> String -> Chart
+line : Chart -> DataType1 -> a -> Chart
 line c d o = Native.Chart.line c (encodeDataType1 d) o
 
-bar : Chart -> DataType1 -> String -> Chart
+bar : Chart -> DataType1 -> a -> Chart
 bar c d o = Native.Chart.bar c (encodeDataType1 d) o
 
-radar : Chart -> DataType1 -> String -> Chart
+radar : Chart -> DataType1 -> a -> Chart
 radar c d o = Native.Chart.radar c (encodeDataType1 d) o
 
-polarArea : Chart -> DataType2 -> String -> Chart
+polarArea : Chart -> DataType2 -> a -> Chart
 polarArea c d o = Native.Chart.polarArea c (encodeDataType2 d) o
 
-pie : Chart -> DataType2 -> String -> Chart
+pie : Chart -> DataType2 -> a -> Chart
 pie c d o = Native.Chart.pie c (encodeDataType2 d) o
 
-doughnut : Chart -> DataType2 -> String -> Chart
+doughnut : Chart -> DataType2 -> a -> Chart
 doughnut c d o = Native.Chart.doughnut c (encodeDataType2 d) o
 
 encodeDataType1 : DataType1 -> String
@@ -90,4 +90,3 @@ encodeDataType2 =
               , ("label", string label)
               ]
     in encode 0 << list << L.map encodeDatasetType2
-

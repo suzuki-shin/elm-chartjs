@@ -5,10 +5,7 @@ import Debug
 
 chrt = Chart.chart("canvas")
 
-options = encode 0 <| object [
-             ("bezierCurve", bool True)
-           , ("barShowStroke", bool False)
-          ]
+options2 = { bezierCurve = False , barShowStroke = False , pointDotRadius = 10 }
 
 data2 : Chart.DataType2
 data2 = [ {
@@ -49,7 +46,6 @@ data3 = {
     }
 
 main =
-    let b = Debug.log "data" data2
-        c = Chart.doughnut chrt b options
---         c = Chart.bar chrt b options
+    let b = Debug.log "data" data3
+        c = Chart.line chrt b options2
     in plainText <| "hoge"
