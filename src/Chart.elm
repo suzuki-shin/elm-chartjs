@@ -1,4 +1,4 @@
-module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, LineChartData ) where
+module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2 ) where
 
 import Native.Chart
 import Json.Encode (..)
@@ -11,37 +11,37 @@ type Chart = Chart
 chart : String -> Chart
 chart = Native.Chart.chart
 
-line : Chart -> LineChartData -> String -> Chart
-line chart data options = Native.Chart.line chart (encodeLineChartData data) options
+line : Chart -> DataType1 -> String -> Chart
+line c d o = Native.Chart.line c (encodeDataType1 d) o
 
-bar : Chart -> LineChartData -> String -> Chart
-bar chart data options = Native.Chart.bar chart (encodeLineChartData data) options
+bar : Chart -> DataType1 -> String -> Chart
+bar c d o = Native.Chart.bar c (encodeDataType1 d) o
 
-radar : Chart -> LineChartData -> String -> Chart
-radar chart data options = Native.Chart.radar chart (encodeLineChartData data) options
+radar : Chart -> DataType1 -> String -> Chart
+radar c d o = Native.Chart.radar c (encodeDataType1 d) o
 
-polarArea : Chart -> String -> String -> Chart
-polarArea = Native.Chart.polarArea
+polarArea : Chart -> DataType2 -> String -> Chart
+polarArea c d o = Native.Chart.polarArea c (encodeDataType2 d) o
 
-pie : Chart -> String -> String -> Chart
-pie = Native.Chart.pie
+pie : Chart -> DataType2 -> String -> Chart
+pie c d o = Native.Chart.pie c (encodeDataType2 d) o
 
-doughnut : Chart -> String -> String -> Chart
-doughnut = Native.Chart.doughnut
+doughnut : Chart -> DataType2 -> String -> Chart
+doughnut c d o = Native.Chart.doughnut c (encodeDataType2 d) o
 
 
 encodeLabels : List String -> Value
 encodeLabels = list << L.map string
 
-encodeLineChartData : LineChartData -> String
-encodeLineChartData { labels, datasets }
+encodeDataType1 : DataType1 -> String
+encodeDataType1 { labels, datasets }
     = encode 0 <| object [
          ("labels", encodeLabels labels)
-       , ("datasets", list <| L.map encodeLineChartDataset datasets)
+       , ("datasets", list <| L.map encodeDataTypeset1 datasets)
       ]
 
-encodeLineChartDataset : LineChartDataset -> Value
-encodeLineChartDataset { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
+encodeDataTypeset1 : DataTypeset1 -> Value
+encodeDataTypeset1 { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
     = let ds : List (String, Value)
           ds = [
             ("fillColor", string fillColor)
@@ -54,12 +54,12 @@ encodeLineChartDataset { fillColor, strokeColor, highlightFill, highlightStroke,
            Just label -> object <| ("label", string label) :: ds
            Nothing -> object ds
 
-type alias LineChartData = {
+type alias DataType1 = {
       labels : List String
-    , datasets : List LineChartDataset
+    , datasets : List DataTypeset1
     }
 
-type alias LineChartDataset = {
+type alias DataTypeset1 = {
       fillColor : String
     , strokeColor : String
     , highlightFill : String
@@ -67,3 +67,24 @@ type alias LineChartDataset = {
     , data : List Int
     , mLabel : Maybe String
     }
+
+type alias DataType2 = List DatasetType2
+
+type alias DatasetType2 = {
+      value : Int
+    , color : String
+    , highlight : String
+    , label : String
+    }
+
+encodeDataType2 : DataType2 -> String
+encodeDataType2 = encode 0 << list << L.map encodeDatasetType2
+
+encodeDatasetType2 : DatasetType2 -> Value
+encodeDatasetType2 { value, color, highlight, label }
+    = object [
+       ("value", int value)
+      , ("color", string color)
+      , ("highlight", string highlight)
+      , ("label", string label)
+      ]
