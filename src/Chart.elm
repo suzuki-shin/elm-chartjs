@@ -4,30 +4,29 @@ import Native.Chart
 import Json.Encode (..)
 import List as L
 import List ((::))
-import Debug
 
 type Chart = Chart
 
 chart : String -> Chart
 chart = Native.Chart.chart
 
-line : Chart -> DataType1 -> a -> Chart
-line c d o = Native.Chart.line c (encodeDataType1 d) o
+line : a -> Chart -> DataType1 -> Chart
+line opts chart data = Native.Chart.line chart (encodeDataType1 data) opts
 
-bar : Chart -> DataType1 -> a -> Chart
-bar c d o = Native.Chart.bar c (encodeDataType1 d) o
+bar : a -> Chart -> DataType1 -> Chart
+bar opts chart data = Native.Chart.bar chart (encodeDataType1 data) opts
 
-radar : Chart -> DataType1 -> a -> Chart
-radar c d o = Native.Chart.radar c (encodeDataType1 d) o
+radar : a -> Chart -> DataType1 -> Chart
+radar opts chart data = Native.Chart.radar chart (encodeDataType1 data) opts
 
-polarArea : Chart -> DataType2 -> a -> Chart
-polarArea c d o = Native.Chart.polarArea c (encodeDataType2 d) o
+polarArea : a -> Chart -> DataType2 -> Chart
+polarArea opts chart data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
-pie : Chart -> DataType2 -> a -> Chart
-pie c d o = Native.Chart.pie c (encodeDataType2 d) o
+pie : a -> Chart -> DataType2 -> Chart
+pie opts chart data = Native.Chart.pie chart (encodeDataType2 data) opts
 
-doughnut : Chart -> DataType2 -> a -> Chart
-doughnut c d o = Native.Chart.doughnut c (encodeDataType2 d) o
+doughnut : a -> Chart -> DataType2 -> Chart
+doughnut opts chart data = Native.Chart.doughnut chart (encodeDataType2 data) opts
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
