@@ -1,33 +1,73 @@
 module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2 ) where
 
+{-| This module is bindings for Chart.js
+
+# Create Chart Object
+@docs chart
+
+# Draw Chart
+@docs line, bar, radar, polarArea, pie, doughnut
+
+# Types of Chart Data
+@docs DataType1, DataType2
+
+-}
+
 import Native.Chart
 import Json.Encode (..)
 import List as L
 import List ((::))
-import Debug
 
 type Chart = Chart
 
+{-| Create Chart object.
+
+    C.chart "chart1"
+-}
 chart : String -> Chart
 chart = Native.Chart.chart
 
-line : Chart -> DataType1 -> a -> Chart
-line c d o = Native.Chart.line c (encodeDataType1 d) o
+{-| Draw line chart.
 
-bar : Chart -> DataType1 -> a -> Chart
-bar c d o = Native.Chart.bar c (encodeDataType1 d) o
+    line (C.chart "chart1") { barShowStroke = True } data
+-}
+line : Chart -> a -> DataType1 -> Chart
+line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
-radar : Chart -> DataType1 -> a -> Chart
-radar c d o = Native.Chart.radar c (encodeDataType1 d) o
+{-| Draw bar chart.
 
-polarArea : Chart -> DataType2 -> a -> Chart
-polarArea c d o = Native.Chart.polarArea c (encodeDataType2 d) o
+    bar (C.chart "chart1") { barShowStroke = True } data
+-}
+bar : Chart -> a -> DataType1 -> Chart
+bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
-pie : Chart -> DataType2 -> a -> Chart
-pie c d o = Native.Chart.pie c (encodeDataType2 d) o
+{-| Draw radar chart.
 
-doughnut : Chart -> DataType2 -> a -> Chart
-doughnut c d o = Native.Chart.doughnut c (encodeDataType2 d) o
+    radar (C.chart "chart1") { pointDot = False, angleLineWidth = 1 } data
+-}
+radar : Chart -> a -> DataType1 -> Chart
+radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
+
+{-| Draw polarArea chart.
+
+    polarArea (C.chart "chart1") { scaleShowLine = True }data
+-}
+polarArea : Chart -> a -> DataType2 -> Chart
+polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
+
+{-| Draw pie chart.
+
+    pie (C.chart "chart1") {} data
+-}
+pie : Chart -> a -> DataType2 -> Chart
+pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
+
+{-| Draw doughnut chart.
+
+    doughnut (C.chart "chart1") {} data
+-}
+doughnut : Chart -> a -> DataType2 -> Chart
+doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
@@ -53,8 +93,43 @@ encodeDataType1 { labels, datasets }
        , ("datasets", list <| L.map encodeDataTypeset1 datasets)
       ]
 
+encodeDataType2 : DataType2 -> String
+encodeDataType2 =
+    let encodeDatasetType2 : DatasetType2 -> Value
+        encodeDatasetType2 { value, color, highlight, label }
+            = object [
+                ("value", int value)
+              , ("color", string color)
+              , ("highlight", string highlight)
+              , ("label", string label)
+              ]
+    in encode 0 << list << L.map encodeDatasetType2
 
--- data type for line chart, bar chart and radar chart
+{-| Data type for line chart, bar chart and radar chart
+
+    -- example
+    {
+      labels = ["January","February","March","April","May","June","July"],
+      datasets = [
+       {
+         fillColor = "rgba(220,220,220,0.5)",
+         strokeColor = "rgba(220,220,220,0.8)",
+         highlightFill = "rgba(220,220,220,0.75)",
+         highlightStroke = "rgba(220,220,220,1)",
+         data = [30, 34, 67, 12, 96, 75, 39],
+         mLabel = Nothing
+       },
+       {
+         fillColor = "rgba(151,187,205,0.5)",
+         strokeColor = "rgba(151,187,205,0.8)",
+         highlightFill = "rgba(151,187,205,0.75)",
+         highlightStroke = "rgba(151,187,205,1)",
+         data = [20, 4, 87, 32, 46, 55, 38],
+         mLabel = Just "xlabel"
+       }
+      ]
+    }
+-}
 type alias DataType1 = {
       labels : List String
     , datasets : List DataTypeset1
@@ -69,7 +144,30 @@ type alias DataTypeset1 = {
     , mLabel : Maybe String
     }
 
--- data type for polarArea chart, pie chart and doughnut chart
+{-| Data type for polarArea chart, pie chart and doughnut chart
+
+    -- example
+    [
+      {
+        value = 300
+      , color = "#F7464A"
+      , highlight = "#FF5A5E"
+      , label = "Red"
+      },
+      {
+        value = 50
+      , color = "#46BFBD"
+      , highlight = "#5AD3D1"
+      , label = "Green"
+      },
+      {
+        value = 150
+      , color = "#6BFBD0"
+      , highlight = "#AD3D10"
+      , label = "hgoe"
+      }
+    ]
+-}
 type alias DataType2 = List DatasetType2
 
 type alias DatasetType2 = {
@@ -78,15 +176,3 @@ type alias DatasetType2 = {
     , highlight : String
     , label : String
     }
-
-encodeDataType2 : DataType2 -> String
-encodeDataType2 =
-    let encodeDatasetType2 : DatasetType2 -> Value
-        encodeDatasetType2 { value, color, highlight, label }
-            = object [
-                ("value", int value)
-              , ("color", string color)
-              , ("highlight", string highlight)
-              , ("label", string label)
-              ]
-    in encode 0 << list << L.map encodeDatasetType2
