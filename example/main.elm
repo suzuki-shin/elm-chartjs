@@ -3,7 +3,7 @@ import Text (plainText)
 import Json.Encode (..)
 import Debug
 
-options2 = { bezierCurve = True , barShowStroke = False }
+options2 = { bezierCurve = False , barShowStroke = True }
 
 data2 : C.DataType2
 data2 = [ {
@@ -66,5 +66,5 @@ data3 = {
 main =
     let
 --        d = C.polarArea (C.chart "canvas") data2 options2
-       d = C.line options2 (C.chart "canvas") data3
+       d = C.line (C.chart "canvas") options2 data3
     in plainText <| "hoge"
