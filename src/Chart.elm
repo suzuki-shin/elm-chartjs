@@ -10,23 +10,23 @@ type Chart = Chart
 chart : String -> Chart
 chart = Native.Chart.chart
 
-line : a -> Chart -> DataType1 -> Chart
-line opts chart data = Native.Chart.line chart (encodeDataType1 data) opts
+line : Chart -> a -> DataType1 -> Chart
+line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
-bar : a -> Chart -> DataType1 -> Chart
-bar opts chart data = Native.Chart.bar chart (encodeDataType1 data) opts
+bar : Chart -> a -> DataType1 -> Chart
+bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
-radar : a -> Chart -> DataType1 -> Chart
-radar opts chart data = Native.Chart.radar chart (encodeDataType1 data) opts
+radar : Chart -> a -> DataType1 -> Chart
+radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
-polarArea : a -> Chart -> DataType2 -> Chart
-polarArea opts chart data = Native.Chart.polarArea chart (encodeDataType2 data) opts
+polarArea : Chart -> a -> DataType2 -> Chart
+polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
-pie : a -> Chart -> DataType2 -> Chart
-pie opts chart data = Native.Chart.pie chart (encodeDataType2 data) opts
+pie : Chart -> a -> DataType2 -> Chart
+pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 
-doughnut : a -> Chart -> DataType2 -> Chart
-doughnut opts chart data = Native.Chart.doughnut chart (encodeDataType2 data) opts
+doughnut : Chart -> a -> DataType2 -> Chart
+doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
