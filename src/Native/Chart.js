@@ -17,37 +17,37 @@ Elm.Native.Chart.make = function(localRuntime) {
 
     function line(chart, data, options)
     {
-        chart.Line(JSON.parse(data), JSON.parse(options));
+        chart.Line(JSON.parse(data), options);
         return chart;
     }
 
     function bar(chart, data, options)
     {
-        chart.Bar(JSON.parse(data), JSON.parse(options));
+        chart.Bar(JSON.parse(data), options);
         return chart;
     }
 
     function radar(chart, data, options)
     {
-        chart.Radar(JSON.parse(data), JSON.parse(options));
+        chart.Radar(JSON.parse(data), options);
         return chart;
     }
 
     function polarArea(chart, data, options)
     {
-        chart.PolarArea(JSON.parse(data), JSON.parse(options));
+        chart.PolarArea(JSON.parse(data), options);
         return chart;
     }
 
     function pie(chart, data, options)
     {
-        chart.Pie(JSON.parse(data), JSON.parse(options));
+        chart.Pie(JSON.parse(data), options);
         return chart;
     }
 
     function doughnut(chart, data, options)
     {
-        chart.Doughnut(JSON.parse(data), JSON.parse(options));
+        chart.Doughnut(JSON.parse(data), options);
         return chart;
     }
 
