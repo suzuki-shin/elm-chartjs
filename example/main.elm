@@ -1,7 +1,6 @@
-import Chart as C
-import Text (plainText)
-import Json.Encode (..)
-import Debug
+import Chart as C exposing (..)
+import Graphics.Element exposing (show)
+import Json.Encode exposing (..)
 
 options2 = { bezierCurve = False , barShowStroke = True }
 
@@ -67,4 +66,4 @@ main =
     let
 --        d = C.polarArea (C.chart "canvas") data2 options2
        d = C.line (C.chart "canvas") options2 data3
-    in plainText <| "hoge"
+    in show <| "hoge"
