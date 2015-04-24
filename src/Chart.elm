@@ -1,4 +1,4 @@
-module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2 ) where
+module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2 ) where
 
 {-| This module is bindings for Chart.js
 
@@ -21,11 +21,12 @@ type ChartObj = ChartObj
 type Chart = Chart
 
 {-| Create Chart object.
+Create chart object and attach chart on element selected by id.
 
-    chart "chart1"
+    attachOn "chart1"
 -}
-chart : String -> ChartObj
-chart = Native.Chart.chart
+attachOn : String -> ChartObj
+attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
