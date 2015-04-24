@@ -15,39 +15,51 @@ Elm.Native.Chart.make = function(localRuntime) {
         return new Chart(e);
     }
 
-    function line(chart, data, options)
+    function line(chartObj, data, options)
     {
-        chart.Line(JSON.parse(data), options);
+        return chartObj.Line(JSON.parse(data), options);
+    }
+
+    function bar(chartObj, data, options)
+    {
+        return chartObj.Bar(JSON.parse(data), options);
+    }
+
+    function radar(chartObj, data, options)
+    {
+        return chartObj.Radar(JSON.parse(data), options);
+    }
+
+    function polarArea(chartObj, data, options)
+    {
+        return chartObj.PolarArea(JSON.parse(data), options);
+    }
+
+    function pie(chartObj, data, options)
+    {
+        return chartObj.Pie(JSON.parse(data), options);
+    }
+
+    function doughnut(chartObj, data, options)
+    {
+        return chartObj.Doughnut(JSON.parse(data), options);
+    }
+
+    function update(chart)
+    {
+        chart.update();
         return chart;
     }
 
-    function bar(chart, data, options)
+    function addDataType1(chart, data, label)
     {
-        chart.Bar(JSON.parse(data), options);
+        chart.addData(JSON.parse(data), label);
         return chart;
     }
 
-    function radar(chart, data, options)
+    function addDataType2(chart, data, index)
     {
-        chart.Radar(JSON.parse(data), options);
-        return chart;
-    }
-
-    function polarArea(chart, data, options)
-    {
-        chart.PolarArea(JSON.parse(data), options);
-        return chart;
-    }
-
-    function pie(chart, data, options)
-    {
-        chart.Pie(JSON.parse(data), options);
-        return chart;
-    }
-
-    function doughnut(chart, data, options)
-    {
-        chart.Doughnut(JSON.parse(data), options);
+        chart.addData(data, index);
         return chart;
     }
 
@@ -59,6 +71,9 @@ Elm.Native.Chart.make = function(localRuntime) {
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
+        update : update,
+        addDataType1 : F3(addDataType1),
+        addDataType2 : F3(addDataType2),
     };
 
 };
