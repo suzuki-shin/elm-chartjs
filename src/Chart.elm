@@ -3,7 +3,7 @@ module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, 
 {-| This module is bindings for Chart.js
 
 # Create Chart Object
-@docs chart
+@docs attachOn
 
 # Draw Chart
 @docs line, bar, radar, polarArea, pie, doughnut
@@ -30,42 +30,42 @@ attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
-    line (chart "chart1") { barShowStroke = True } data
+    line (attachOn "chart1") { barShowStroke = True } data
 -}
 line : ChartObj -> a -> DataType1 -> Chart
 line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
-    bar (chart "chart1") { barShowStroke = True } data
+    bar (attachOn "chart1") { barShowStroke = True } data
 -}
 bar : ChartObj -> a -> DataType1 -> Chart
 bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
-    radar (chart "chart1") { pointDot = False, angleLineWidth = 1 } data
+    radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
 radar : ChartObj -> a -> DataType1 -> Chart
 radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
-    polarArea (chart "chart1") { scaleShowLine = True }data
+    polarArea (attachOn "chart1") { scaleShowLine = True }data
 -}
 polarArea : ChartObj -> a -> DataType2 -> Chart
 polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
-    pie (chart "chart1") {} data
+    pie (attachOn "chart1") {} data
 -}
 pie : ChartObj -> a -> DataType2 -> Chart
 pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
-    doughnut (chart "chart1") {} data
+    doughnut (attachOn "chart1") {} data
 -}
 doughnut : ChartObj -> a -> DataType2 -> Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
@@ -79,14 +79,14 @@ update = Native.Chart.update
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
-    addDataType1 (line (chart "chart")) [10, 20] "newLabel"
+    addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
 -}
 addDataType1 : Chart -> List Int -> String -> Chart
 addDataType1 chart data label = Native.Chart.addDataType1 chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
-    addDataType2 (polarArea (chart "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
+    addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
 -}
 addDataType2 : Chart -> DatasetType2 -> Maybe Int -> Chart
 addDataType2 chart data mIdx = case mIdx of
@@ -132,7 +132,8 @@ encodeDatasetType2 { value, color, highlight, label }
 {-| Data type for line chart, bar chart and radar chart
 
     -- example
-    {
+    data : DataType1
+    data = {
       labels = ["January","February","March","April","May","June","July"],
       datasets = [
        {
@@ -171,7 +172,8 @@ type alias DataTypeset1 = {
 {-| Data type for polarArea chart, pie chart and doughnut chart
 
     -- example
-    [
+    data : DataType2
+    data = [
       {
         value = 300
       , color = "#F7464A"
