@@ -94,10 +94,10 @@ data1y x = {
 
 main =
     let
-        c2 = C.bar (C.chart "barChart") {} data1
-        c4 = C.radar (C.chart "radarChart") {} data1
-        c3 = C.polarArea (C.chart "polarAreaChart") {} data2
-        c5 = C.pie (C.chart "pieChart") {} data2
-        c6 = C.doughnut (C.chart "doughnutChart") {} data2
+        c2 = C.bar (C.attachOn "barChart") {} data1
+        c4 = C.radar (C.attachOn "radarChart") {} data1
+        c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2
+        c5 = C.pie (C.attachOn "pieChart") {} data2
+        c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
         c7 = addDataType1 c2 [100, 90] "Aug"
-    in (\x -> C.line (C.chart "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+    in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
