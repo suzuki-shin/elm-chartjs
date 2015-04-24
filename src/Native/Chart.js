@@ -63,6 +63,13 @@ Elm.Native.Chart.make = function(localRuntime) {
         return chart;
     }
 
+    function element(html)
+    {
+        console.log('element');
+        console.log(html);
+        return html;
+    }
+
     return localRuntime.Native.Chart.values = {
         chart : chart,
         line : F3(line),
@@ -71,6 +78,7 @@ Elm.Native.Chart.make = function(localRuntime) {
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
+        element : element,
         update : update,
         addDataType1 : F3(addDataType1),
         addDataType2 : F3(addDataType2),
