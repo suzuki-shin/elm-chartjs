@@ -1,4 +1,4 @@
-module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2 ) where
+module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2, element ) where
 
 {-| This module is bindings for Chart.js
 
@@ -16,6 +16,8 @@ module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, 
 import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
+import Html
+import Html.Attributes as Attr
 
 type ChartObj = ChartObj
 type Chart = Chart
@@ -69,6 +71,11 @@ pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 -}
 doughnut : ChartObj -> a -> DataType2 -> Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
+
+element : List Html.Attribute -> Html.Html
+-- element attrs = Html.canvas attrs []
+element attrs = Native.Chart.element <| Html.canvas attrs [Html.text "kjkjkjK"]
+
 
 {-| Re-render Chart.
 
