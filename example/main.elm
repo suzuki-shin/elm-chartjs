@@ -67,4 +67,5 @@ main =
         c3 = C.polarArea (C.chart "polarAreaChart") {} data2
         c5 = C.pie (C.chart "pieChart") {} data2
         c6 = C.doughnut (C.chart "doughnutChart") {} data2
+        c7 = addDataType1 c1 [100, 90] "Aug"
     in show ""
