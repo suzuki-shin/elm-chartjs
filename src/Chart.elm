@@ -1,4 +1,4 @@
-module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2 ) where
+module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2 ) where
 
 {-| This module is bindings for Chart.js
 
@@ -16,58 +16,81 @@ module Chart ( chart, line, bar, radar, polarArea, pie, doughnut, DataType1, Dat
 import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
-import List exposing ((::))
 
+type ChartObj = ChartObj
 type Chart = Chart
 
 {-| Create Chart object.
 
-    C.chart "chart1"
+    chart "chart1"
 -}
-chart : String -> Chart
+chart : String -> ChartObj
 chart = Native.Chart.chart
 
 {-| Draw line chart.
 
-    line (C.chart "chart1") { barShowStroke = True } data
+    line (chart "chart1") { barShowStroke = True } data
 -}
-line : Chart -> a -> DataType1 -> Chart
+line : ChartObj -> a -> DataType1 -> Chart
 line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
-    bar (C.chart "chart1") { barShowStroke = True } data
+    bar (chart "chart1") { barShowStroke = True } data
 -}
-bar : Chart -> a -> DataType1 -> Chart
+bar : ChartObj -> a -> DataType1 -> Chart
 bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
-    radar (C.chart "chart1") { pointDot = False, angleLineWidth = 1 } data
+    radar (chart "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
-radar : Chart -> a -> DataType1 -> Chart
+radar : ChartObj -> a -> DataType1 -> Chart
 radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
-    polarArea (C.chart "chart1") { scaleShowLine = True }data
+    polarArea (chart "chart1") { scaleShowLine = True }data
 -}
-polarArea : Chart -> a -> DataType2 -> Chart
+polarArea : ChartObj -> a -> DataType2 -> Chart
 polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
-    pie (C.chart "chart1") {} data
+    pie (chart "chart1") {} data
 -}
-pie : Chart -> a -> DataType2 -> Chart
+pie : ChartObj -> a -> DataType2 -> Chart
 pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
-    doughnut (C.chart "chart1") {} data
+    doughnut (chart "chart1") {} data
 -}
-doughnut : Chart -> a -> DataType2 -> Chart
+doughnut : ChartObj -> a -> DataType2 -> Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
+
+{-| Re-render Chart.
+
+    update chart
+-}
+update : Chart -> Chart
+update = Native.Chart.update
+
+{-| Add data to Chart that type is Line, Bar and Radar.
+
+    addDataType1 (line (chart "chart")) [10, 20] "newLabel"
+-}
+addDataType1 : Chart -> List Int -> String -> Chart
+addDataType1 chart data label = Native.Chart.addDataType1 chart (encode 0 (list (L.map int data))) label
+
+{-| Add data to Chart that type is Polararea, Pie and Doughnut.
+
+    addDataType2 (polarArea (chart "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
+-}
+addDataType2 : Chart -> DatasetType2 -> Maybe Int -> Chart
+addDataType2 chart data mIdx = case mIdx of
+    Just index -> Native.Chart.addData chart (encodeDatasetType2 data) index
+    Nothing -> Native.Chart.addData chart (encodeDatasetType2 data)
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
@@ -94,16 +117,16 @@ encodeDataType1 { labels, datasets }
       ]
 
 encodeDataType2 : DataType2 -> String
-encodeDataType2 =
-    let encodeDatasetType2 : DatasetType2 -> Value
-        encodeDatasetType2 { value, color, highlight, label }
-            = object [
-                ("value", int value)
-              , ("color", string color)
-              , ("highlight", string highlight)
-              , ("label", string label)
-              ]
-    in encode 0 << list << L.map encodeDatasetType2
+encodeDataType2 = encode 0 << list << L.map encodeDatasetType2
+
+encodeDatasetType2 : DatasetType2 -> Value
+encodeDatasetType2 { value, color, highlight, label }
+    = object [
+        ("value", int value)
+      , ("color", string color)
+      , ("highlight", string highlight)
+      , ("label", string label)
+      ]
 
 {-| Data type for line chart, bar chart and radar chart
 
