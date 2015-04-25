@@ -1,6 +1,6 @@
 {
-    "version": "0.0.1",
-    "summary": "Elm bindings for Chart.js",
+    "version": "1.0.0",
+    "summary": "Elm binding for Chart.js",
     "repository": "https://github.com/suzuki-shin/elm-chartjs.git",
     "license": "BSD3",
     "source-directories": [
