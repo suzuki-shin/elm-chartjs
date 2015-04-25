@@ -3,6 +3,8 @@ import Graphics.Element exposing (show)
 import Json.Encode exposing (..)
 import Signal exposing ((<~), sampleOn)
 import Mouse
+import Html
+import Html.Attributes as Attr exposing (..)
 
 data1 : C.DataType1
 data1 = {
@@ -115,4 +117,6 @@ main =
         c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
         c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
-    in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+    in C.line "lineChart" { bezierCurve = False } data1
+        |> \_ -> Html.canvas [id "foo", style [ ("height", "450px"), ("width", "600px") ]] []
+  --     in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x

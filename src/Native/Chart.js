@@ -15,10 +15,27 @@ Elm.Native.Chart.make = function(localRuntime) {
         return new Chart(e);
     }
 
-    function line(chartObj, data, options)
+    function line(id, data, options)
     {
-        return chartObj.Line(JSON.parse(data), options);
+        console.log(id);
+        console.log(data);
+        console.log(options);
+        var mo = new MutationObserver(function(mutation){
+            console.log(mutation);
+            var e = document.getElementById(id);
+            if (e) {
+                var chartObj = new Chart(e.getContext("2d"));
+                return chartObj.Line(JSON.parse(data), options);
+            }
+            console.log(e);
+        });
+        mo.observe(document.body, {attributes: true, childList: true});
     }
+
+//     function line(chartObj, data, options)
+//     {
+//         return chartObj.Line(JSON.parse(data), options);
+//     }
 
     function bar(chartObj, data, options)
     {

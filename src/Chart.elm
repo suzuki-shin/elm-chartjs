@@ -42,10 +42,10 @@ attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
-    line (attachOn "chart1") { barShowStroke = True } data
+    line "chart1" { barShowStroke = True } data
 -}
-line : ChartObj -> a -> DataType1 -> Chart
-line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
+line : String -> a -> DataType1 -> Chart
+line id opt data = Native.Chart.line id (encodeDataType1 data) opt
 
 {-| Draw bar chart.
 
