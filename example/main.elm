@@ -92,12 +92,27 @@ data1y x = {
       ]
     }
 
+datasetType2a =
+    {
+      value = 135
+    , color = "#FBD000"
+    , highlight = "#3D1000"
+    , label = "FUGA"
+    }
+
+datasetType2b =
+    {
+      value = 50
+    , color = "#BD000F"
+    , highlight = "#D1000F"
+    , label = "HOGE"
+    }
+
 main =
     let
-        c2 = C.bar (C.attachOn "barChart") {} data1
+        c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
         c4 = C.radar (C.attachOn "radarChart") {} data1
-        c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2
-        c5 = C.pie (C.attachOn "pieChart") {} data2
+        c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
+        c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
-        c7 = addDataType1 c2 [100, 90] "Aug"
     in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x

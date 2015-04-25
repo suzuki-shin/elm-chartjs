@@ -1,4 +1,16 @@
-module Chart ( attachOn, line, bar, radar, polarArea, pie, doughnut, DataType1, DataType2, update, addDataType1, addDataType2 ) where
+module Chart ( attachOn
+             , line
+             , bar
+             , radar
+             , polarArea
+             , pie
+             , doughnut
+             , update
+             , addDataType1
+             , addDataType2
+             , DataType1
+             , DataType2
+             ) where
 
 {-| This module is bindings for Chart.js
 
@@ -81,17 +93,17 @@ update = Native.Chart.update
 
     addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
 -}
-addDataType1 : Chart -> List Int -> String -> Chart
-addDataType1 chart data label = Native.Chart.addDataType1 chart (encode 0 (list (L.map int data))) label
+addDataType1 : List Int -> String -> Chart -> Chart
+addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
     addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
 -}
-addDataType2 : Chart -> DatasetType2 -> Maybe Int -> Chart
-addDataType2 chart data mIdx = case mIdx of
-    Just index -> Native.Chart.addData chart (encodeDatasetType2 data) index
-    Nothing -> Native.Chart.addData chart (encodeDatasetType2 data)
+addDataType2 : DatasetType2 -> Maybe Int -> Chart -> Chart
+addDataType2 data mIdx chart = case mIdx of
+    Just index -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data)) index
+    Nothing -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data))
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
