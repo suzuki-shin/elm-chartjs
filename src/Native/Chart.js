@@ -51,15 +51,9 @@ Elm.Native.Chart.make = function(localRuntime) {
         return chart;
     }
 
-    function addDataType1(chart, data, label)
+    function addData(chart, data, label)
     {
         chart.addData(JSON.parse(data), label);
-        return chart;
-    }
-
-    function addDataType2(chart, data, index)
-    {
-        chart.addData(data, index);
         return chart;
     }
 
@@ -72,8 +66,7 @@ Elm.Native.Chart.make = function(localRuntime) {
         pie : F3(pie),
         doughnut : F3(doughnut),
         update : update,
-        addDataType1 : F3(addDataType1),
-        addDataType2 : F3(addDataType2),
+        addData : F3(addData),
     };
 
 };
