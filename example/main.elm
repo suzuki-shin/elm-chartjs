@@ -3,8 +3,10 @@ import Graphics.Element exposing (show)
 import Json.Encode exposing (..)
 import Signal exposing ((<~), sampleOn)
 import Mouse
-import Html
+import Html as H exposing (..)
 import Html.Attributes as Attr exposing (..)
+import Task exposing (Task, andThen)
+import Debug
 
 data1 : C.DataType1
 data1 = {
@@ -112,11 +114,24 @@ datasetType2b =
 
 main =
     let
-        c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
-        c4 = C.radar (C.attachOn "radarChart") {} data1
-        c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
-        c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
-        c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
-    in C.line "lineChart" { bezierCurve = False } data1
-        |> \_ -> Html.canvas [id "foo", style [ ("height", "450px"), ("width", "600px") ]] []
-  --     in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+        a = "a"
+--         c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
+--         c4 = C.radar (C.attachOn "radarChart") {} data1
+--         c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
+--         c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
+--         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
+    in H.canvas [Attr.id "line2", Attr.style [("width", "600"),("height", "450")]] []
+--     in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+
+t1 : Int -> Task error C.Chart
+t1 y = C.lineOn "line2" {bezierCurve = False} (data1y (Debug.log "y" y))
+-- t1 y = C.lineOn "line2" {bezierCurve = False} (data1y (Debug.log "y" y)) `andThen` C.update2
+
+st1 : Signal (Task error C.Chart)
+st1 = t1 <~ sampleOn Mouse.clicks Mouse.y
+
+port drawLine2_ : Signal (Task error C.Chart)
+port drawLine2_ = st1
+
+port hoho : Signal (Task error C.Chart)
+port hoho = st1

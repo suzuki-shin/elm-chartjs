@@ -1,13 +1,16 @@
 module Chart ( attachOn
              , line
+             , lineOn
              , bar
              , radar
              , polarArea
              , pie
              , doughnut
              , update
+             , update2
              , addDataType1
              , addDataType2
+             , Chart
              , DataType1
              , DataType2
              ) where
@@ -28,6 +31,7 @@ module Chart ( attachOn
 import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
+import Task exposing (Task)
 
 type ChartObj = ChartObj
 type Chart = Chart
@@ -46,6 +50,13 @@ attachOn = Native.Chart.chart
 -}
 line : String -> a -> DataType1 -> Chart
 line id opt data = Native.Chart.line id (encodeDataType1 data) opt
+
+{-| Draw line chart and return Task.
+
+    lineOn "chart1" { barShowStroke = True } data
+-}
+lineOn : String -> a -> DataType1 -> Task error Chart
+lineOn id opts data = Native.Chart.lineOn id (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
@@ -88,6 +99,9 @@ doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) op
 -}
 update : Chart -> Chart
 update = Native.Chart.update
+
+update2 : Chart -> Task error Chart
+update2 = Native.Chart.update2
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 

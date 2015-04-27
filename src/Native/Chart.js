@@ -8,6 +8,7 @@ Elm.Native.Chart.make = function(localRuntime) {
     }
 
     var Result = Elm.Result.make(localRuntime);
+    var Task = Elm.Native.Task.make(localRuntime);
 
     function chart(id)
     {
@@ -15,27 +16,53 @@ Elm.Native.Chart.make = function(localRuntime) {
         return new Chart(e);
     }
 
-    function line(id, data, options)
+    function lineOn(id, data, options)
     {
+        console.log('line2');
         console.log(id);
-        console.log(data);
-        console.log(options);
-        var mo = new MutationObserver(function(mutation){
-            console.log(mutation);
-            var e = document.getElementById(id);
+
+        return Task.asyncFunction(function(callback){
+            var e = document.getElementById(id)
             if (e) {
-                var chartObj = new Chart(e.getContext("2d"));
-                return chartObj.Line(JSON.parse(data), options);
+                var c = new Chart(e.getContext("2d"));
+                var lc = c.Line(JSON.parse(data), options);
+                callback(Task.succeed(lc));
+            } else {
+
+                var mo = new MutationObserver(function(ev){
+                    var e = document.getElementById(id)
+                    if (e) {
+                        var c = new Chart(e.getContext("2d"));
+                        var lc = c.Line(JSON.parse(data), options);
+                        callback(Task.succeed(lc));
+                    }
+                });
+                mo.observe(document.body, {childList: true, subtree: true});
             }
-            console.log(e);
         });
-        mo.observe(document.body, {attributes: true, childList: true});
     }
 
-//     function line(chartObj, data, options)
+//     function lineOn(id, data, options)
 //     {
-//         return chartObj.Line(JSON.parse(data), options);
+//         console.log(id);
+//         console.log(data);
+//         console.log(options);
+//         var mo = new MutationObserver(function(mutation){
+//             console.log(mutation);
+//             var e = document.getElementById(id);
+//             if (e) {
+//                 var chartObj = new Chart(e.getContext("2d"));
+//                 return chartObj.Line(JSON.parse(data), options);
+//             }
+//             console.log(e);
+//         });
+//         mo.observe(document.body, {attributes: true, childList: true});
 //     }
+
+    function line(chartObj, data, options)
+    {
+        return chartObj.Line(JSON.parse(data), options);
+    }
 
     function bar(chartObj, data, options)
     {
@@ -68,6 +95,16 @@ Elm.Native.Chart.make = function(localRuntime) {
         return chart;
     }
 
+    function update2(chart)
+    {
+        console.log('update2');
+        console.log(chart);
+        return Task.asyncFunction(function(callback) {
+            chart.update();
+            return callback(Task.succeed(chart));
+        });
+    }
+
     function addData(chart, data, label)
     {
         chart.addData(JSON.parse(data), label);
@@ -77,13 +114,14 @@ Elm.Native.Chart.make = function(localRuntime) {
     return localRuntime.Native.Chart.values = {
         chart : chart,
         line : F3(line),
+        lineOn : F3(lineOn),
         bar : F3(bar),
         radar : F3(radar),
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
         update : update,
+        update2 : update2,
         addData : F3(addData),
     };
-
 };
