@@ -10,6 +10,8 @@ module Chart ( attachOn
              , addDataType2
              , DataType1
              , DataType2
+             , DatasetType1
+             , DatasetType2
              ) where
 
 {-| This module is bindings for Chart.js
@@ -21,7 +23,7 @@ module Chart ( attachOn
 @docs line, bar, radar, polarArea, pie, doughnut
 
 # Types of Chart Data
-@docs DataType1, DataType2
+@docs DataType1, DataType2, DatasetType1, DatasetType2
 
 -}
 
@@ -29,89 +31,104 @@ import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
 
-type ChartObj = ChartObj
 type Chart = Chart
 
-{-| Create Chart object.
+{-| This function calls getContext("2d") of javascript's canvas and construct Chart instance of Chart.js.
 Create chart object and attach chart on element selected by id.
 
-    attachOn "chart1"
+    line (attachOn "chart1") { barShowStroke = True } data
 -}
-attachOn : String -> ChartObj
+attachOn : String -> Chart
 attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
     line (attachOn "chart1") { barShowStroke = True } data
 -}
-line : ChartObj -> a -> DataType1 -> Chart
+line : Chart -> a -> DataType1 -> Chart
 line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
     bar (attachOn "chart1") { barShowStroke = True } data
 -}
-bar : ChartObj -> a -> DataType1 -> Chart
+bar : Chart -> a -> DataType1 -> Chart
 bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
     radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
-radar : ChartObj -> a -> DataType1 -> Chart
+radar : Chart -> a -> DataType1 -> Chart
 radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
-    polarArea (attachOn "chart1") { scaleShowLine = True }data
+    polarArea (attachOn "chart1") { scaleShowLine = True } data
 -}
-polarArea : ChartObj -> a -> DataType2 -> Chart
+polarArea : Chart -> a -> DataType2 -> Chart
 polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
     pie (attachOn "chart1") {} data
 -}
-pie : ChartObj -> a -> DataType2 -> Chart
+pie : Chart -> a -> DataType2 -> Chart
 pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
     doughnut (attachOn "chart1") {} data
 -}
-doughnut : ChartObj -> a -> DataType2 -> Chart
+doughnut : Chart -> a -> DataType2 -> Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
 
 {-| Re-render Chart.
 
-    update chart
+    data x = {
+      labels = ["January","February","March","April","May","June","July"],
+      datasets = [
+       {
+         fillColor = "rgba(220,220,220,0.5)",
+         strokeColor = "rgba(220,220,220,0.8)",
+         highlightFill = "rgba(220,220,220,0.75)",
+         highlightStroke = "rgba(220,220,220,1)",
+         data = [30, 75, x],
+         mLabel = Nothing
+       },
+      ]
+    }
+    (\x -> line (attachOn "chart") {} (data x) |> update) <~ sampleOn Mouse.isDown Mouse.x
 -}
 update : Chart -> Chart
 update = Native.Chart.update
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
-    addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
+    bar (attachOn "chart") {} data |> addDataType1 [100, 39] "August"
 -}
 addDataType1 : List Int -> String -> Chart -> Chart
 addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
-    addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
+    addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"} Nothing
 -}
 addDataType2 : DatasetType2 -> Maybe Int -> Chart -> Chart
 addDataType2 data mIdx chart = case mIdx of
     Just index -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data)) index
     Nothing -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data))
 
+{-| This is helper function that encode data for line, bar and radar function.
+This function encode DataType1 data to JSON string.
+-}
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }
     = let encodeLabels : List String -> Value
           encodeLabels = list << L.map string
 
-          encodeDataTypeset1 : DataTypeset1 -> Value
-          encodeDataTypeset1 { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
+          encodeDatasetType1 : DatasetType1 -> Value
+          encodeDatasetType1 { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
               = let ds : List (String, Value)
                     ds = [
                       ("fillColor", string fillColor)
@@ -126,12 +143,17 @@ encodeDataType1 { labels, datasets }
 
       in encode 0 <| object [
          ("labels", encodeLabels labels)
-       , ("datasets", list <| L.map encodeDataTypeset1 datasets)
+       , ("datasets", list <| L.map encodeDatasetType1 datasets)
       ]
 
+{-| This is helper function that encode data for polarArea, pie and doughnut function.
+This function encode DataType2 data to JSON string.
+-}
 encodeDataType2 : DataType2 -> String
 encodeDataType2 = encode 0 << list << L.map encodeDatasetType2
 
+{-| This is helper function that encode DatasetType2 data to JSON Value.
+-}
 encodeDatasetType2 : DatasetType2 -> Value
 encodeDatasetType2 { value, color, highlight, label }
     = object [
@@ -169,10 +191,12 @@ encodeDatasetType2 { value, color, highlight, label }
 -}
 type alias DataType1 = {
       labels : List String
-    , datasets : List DataTypeset1
+    , datasets : List DatasetType1
     }
 
-type alias DataTypeset1 = {
+{-| Data type that "datasets" field of DataType1 data.
+-}
+type alias DatasetType1 = {
       fillColor : String
     , strokeColor : String
     , highlightFill : String
@@ -208,6 +232,8 @@ type alias DataTypeset1 = {
 -}
 type alias DataType2 = List DatasetType2
 
+{-| Data type that "datasets" field of DataType1 data.
+-}
 type alias DatasetType2 = {
       value : Int
     , color : String
