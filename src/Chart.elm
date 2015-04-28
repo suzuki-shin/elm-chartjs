@@ -43,6 +43,7 @@ attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
+    -- new Chart(document.getElementById("chart1").getContext("2d")).Line(data, { barShowStroke = True });
     line (attachOn "chart1") { barShowStroke = True } data
 -}
 line : Chart -> a -> DataType1 -> Chart
@@ -50,6 +51,7 @@ line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
+    -- new Chart(document.getElementById("chart1").getContext("2d")).Bar(data, { barShowStroke = True });
     bar (attachOn "chart1") { barShowStroke = True } data
 -}
 bar : Chart -> a -> DataType1 -> Chart
@@ -57,6 +59,7 @@ bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
+    -- new Chart(document.getElementById("chart1").getContext("2d")).Radar(data, { pointDot = False, angleLineWidth = 1 });
     radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
 radar : Chart -> a -> DataType1 -> Chart
@@ -64,6 +67,7 @@ radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
+    -- new Chart(document.getElementById("chart1").getContext("2d")).PolarArea(data, { scaleShowLine = True });
     polarArea (attachOn "chart1") { scaleShowLine = True } data
 -}
 polarArea : Chart -> a -> DataType2 -> Chart
@@ -71,6 +75,7 @@ polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) 
 
 {-| Draw pie chart.
 
+    -- new Chart(document.getElementById("chart1").getContext("2d")).Pie(data, {});
     pie (attachOn "chart1") {} data
 -}
 pie : Chart -> a -> DataType2 -> Chart
@@ -79,6 +84,7 @@ pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 {-| Draw doughnut chart.
 
     doughnut (attachOn "chart1") {} data
+    -- new Chart(document.getElementById("chart1").getContext("2d")).Doughnut(data, {});
 -}
 doughnut : Chart -> a -> DataType2 -> Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
