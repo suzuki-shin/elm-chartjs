@@ -1,5 +1,4 @@
-module Chart ( attachOn
-             , line
+module Chart ( line
              , bar
              , radar
              , polarArea
@@ -8,6 +7,7 @@ module Chart ( attachOn
              , update
              , addDataType1
              , addDataType2
+             , Chart
              , DataType1
              , DataType2
              , DatasetType1
@@ -15,9 +15,6 @@ module Chart ( attachOn
              ) where
 
 {-| This module is bindings for Chart.js
-
-# Create Chart Object
-@docs attachOn
 
 # Draw Chart
 @docs line, bar, radar, polarArea, pie, doughnut
@@ -30,63 +27,57 @@ module Chart ( attachOn
 import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
+import Signal exposing ((<~))
+import Debug
 
 type Chart = Chart
-
-{-| This function calls getContext("2d") of javascript's canvas and construct Chart instance of Chart.js.
-Create chart object and attach chart on element selected by id.
-
-    line (attachOn "chart1") { barShowStroke = True } data
--}
-attachOn : String -> Chart
-attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
     -- new Chart(document.getElementById("chart1").getContext("2d")).Line(data, { barShowStroke = True });
-    line (attachOn "chart1") { barShowStroke = True } data
+    line "chart1" { barShowStroke = True } data
 -}
-line : Chart -> a -> DataType1 -> Chart
-line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
+line : String -> a -> DataType1 -> Signal Chart
+line id opts data = Native.Chart.line id (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
     -- new Chart(document.getElementById("chart1").getContext("2d")).Bar(data, { barShowStroke = True });
-    bar (attachOn "chart1") { barShowStroke = True } data
+    bar "chart1" { barShowStroke = True } data
 -}
-bar : Chart -> a -> DataType1 -> Chart
+bar : String -> a -> DataType1 -> Signal Chart
 bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
     -- new Chart(document.getElementById("chart1").getContext("2d")).Radar(data, { pointDot = False, angleLineWidth = 1 });
-    radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
+    radar "chart1" { pointDot = False, angleLineWidth = 1 } data
 -}
-radar : Chart -> a -> DataType1 -> Chart
+radar : String -> a -> DataType1 -> Signal Chart
 radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
     -- new Chart(document.getElementById("chart1").getContext("2d")).PolarArea(data, { scaleShowLine = True });
-    polarArea (attachOn "chart1") { scaleShowLine = True } data
+    polarArea "chart1" { scaleShowLine = True } data
 -}
-polarArea : Chart -> a -> DataType2 -> Chart
+polarArea : String -> a -> DataType2 -> Signal Chart
 polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
     -- new Chart(document.getElementById("chart1").getContext("2d")).Pie(data, {});
-    pie (attachOn "chart1") {} data
+    pie "chart1" {} data
 -}
-pie : Chart -> a -> DataType2 -> Chart
+pie : String -> a -> DataType2 -> Signal Chart
 pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
-    doughnut (attachOn "chart1") {} data
     -- new Chart(document.getElementById("chart1").getContext("2d")).Doughnut(data, {});
+    doughnut "chart1" {} data
 -}
-doughnut : Chart -> a -> DataType2 -> Chart
+doughnut : String -> a -> DataType2 -> Signal Chart
 doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
 
 {-| Re-render Chart.
@@ -104,23 +95,23 @@ doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) op
        },
       ]
     }
-    (\x -> line (attachOn "chart") {} (data x) |> update) <~ sampleOn Mouse.isDown Mouse.x
+    (\x -> line "chart" {} (data x) |> update) <~ sampleOn Mouse.isDown Mouse.x
 -}
-update : Chart -> Chart
-update = Native.Chart.update
+update : a -> Signal Chart -> Signal Chart
+update d sc = Native.Chart.update (Debug.log "d" d) <~ sc
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
-    bar (attachOn "chart") {} data |> addDataType1 [100, 39] "August"
+    (addDataType1 [100, 39] "August") <~ bar "chart" {} data
 -}
-addDataType1 : List Int -> String -> Chart -> Chart
+addDataType1 : List Int -> String -> Chart -> Signal Chart
 addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
-    addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"} Nothing
+    addDataType2 (polarArea "chart") {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"} Nothing
 -}
-addDataType2 : DatasetType2 -> Maybe Int -> Chart -> Chart
+addDataType2 : DatasetType2 -> Maybe Int -> Chart -> Signal Chart
 addDataType2 data mIdx chart = case mIdx of
     Just index -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data)) index
     Nothing -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data))
