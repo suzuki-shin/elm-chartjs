@@ -8,47 +8,51 @@ Elm.Native.Chart.make = function(localRuntime) {
     }
 
     var Result = Elm.Result.make(localRuntime);
+    var NS     = Elm.Native.Signal.make(localRuntime);
 
     function chart(id)
     {
-        var e = document.getElementById(id).getContext("2d");
-        return new Chart(e);
+        var e = document.getElementById(id)
+        var ctx = e.getContext("2d");
+        return new Chart(ctx);
     }
 
-    function line(chartObj, data, options)
+    function line(id, data, options)
     {
-        return chartObj.Line(JSON.parse(data), options);
+        return NS.constant(chart(id).Line(JSON.parse(data), options));
     }
 
-    function bar(chartObj, data, options)
+    function bar(id, data, options)
     {
-        return chartObj.Bar(JSON.parse(data), options);
+        return NS.constant(chart(id).Bar(JSON.parse(data), options));
     }
 
-    function radar(chartObj, data, options)
+    function radar(id, data, options)
     {
-        return chartObj.Radar(JSON.parse(data), options);
+        return NS.constant(chart(id).Radar(JSON.parse(data), options));
     }
 
-    function polarArea(chartObj, data, options)
+    function polarArea(id, data, options)
     {
-        return chartObj.PolarArea(JSON.parse(data), options);
+        return NS.constant(chart(id).PolarArea(JSON.parse(data), options));
     }
 
-    function pie(chartObj, data, options)
+    function pie(id, data, options)
     {
-        return chartObj.Pie(JSON.parse(data), options);
+        return NS.constant(chart(id).Pie(JSON.parse(data), options));
     }
 
-    function doughnut(chartObj, data, options)
+    function doughnut(id, data, options)
     {
-        return chartObj.Doughnut(JSON.parse(data), options);
+        return NS.constant(chart(id).Doughnut(JSON.parse(data), options));
     }
 
-    function update(chart)
+    function update(data, chart)
     {
+console.log(chart);
+        chart.data = data;
         chart.update();
-        return chart;
+        return NS.constant(chart);
     }
 
     function addData(chart, data, label)
@@ -58,14 +62,13 @@ Elm.Native.Chart.make = function(localRuntime) {
     }
 
     return localRuntime.Native.Chart.values = {
-        chart : chart,
         line : F3(line),
         bar : F3(bar),
         radar : F3(radar),
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
-        update : update,
+        update : F2(update),
         addData : F3(addData),
     };
 
