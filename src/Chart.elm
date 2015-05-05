@@ -1,13 +1,10 @@
-module Chart ( attachOn
-             , line
-             , lineOn
+module Chart (
+               line
              , bar
              , radar
              , polarArea
              , pie
              , doughnut
-             , update
-             , update2
              , addDataType1
              , addDataType2
              , Chart
@@ -16,9 +13,6 @@ module Chart ( attachOn
              ) where
 
 {-| This module is bindings for Chart.js
-
-# Create Chart Object
-@docs attachOn
 
 # Draw Chart
 @docs line, bar, radar, polarArea, pie, doughnut
@@ -33,75 +27,49 @@ import Json.Encode exposing (..)
 import List as L exposing (..)
 import Task exposing (Task)
 
-type ChartObj = ChartObj
 type Chart = Chart
-
-{-| Create Chart object.
-Create chart object and attach chart on element selected by id.
-
-    attachOn "chart1"
--}
-attachOn : String -> ChartObj
-attachOn = Native.Chart.chart
-
-{-| Draw line chart.
-
-    line "chart1" { barShowStroke = True } data
--}
-line : String -> a -> DataType1 -> Chart
-line id opt data = Native.Chart.line id (encodeDataType1 data) opt
 
 {-| Draw line chart and return Task.
 
     lineOn "chart1" { barShowStroke = True } data
 -}
-lineOn : String -> a -> DataType1 -> Task error Chart
-lineOn id opts data = Native.Chart.lineOn id (encodeDataType1 data) opts
+line : String -> a -> DataType1 -> Task error Chart
+line id opts data = Native.Chart.line id (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
     bar (attachOn "chart1") { barShowStroke = True } data
 -}
-bar : ChartObj -> a -> DataType1 -> Chart
-bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
+bar : String -> a -> DataType1 -> Task error Chart
+bar id opts data = Native.Chart.bar id (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
     radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
-radar : ChartObj -> a -> DataType1 -> Chart
-radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
+radar : String -> a -> DataType1 -> Task error Chart
+radar id opts data = Native.Chart.radar id (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
     polarArea (attachOn "chart1") { scaleShowLine = True }data
 -}
-polarArea : ChartObj -> a -> DataType2 -> Chart
-polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
+polarArea : String -> a -> DataType2 -> Task error Chart
+polarArea id opts data = Native.Chart.polarArea id (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
     pie (attachOn "chart1") {} data
 -}
-pie : ChartObj -> a -> DataType2 -> Chart
-pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
+pie : String -> a -> DataType2 -> Task error Chart
+pie id opts data = Native.Chart.pie id (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
     doughnut (attachOn "chart1") {} data
 -}
-doughnut : ChartObj -> a -> DataType2 -> Chart
-doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
-
-{-| Re-render Chart.
-
-    update chart
--}
-update : Chart -> Chart
-update = Native.Chart.update
-
-update2 : Chart -> Task error Chart
-update2 = Native.Chart.update2
+doughnut : String -> a -> DataType2 -> Task error Chart
+doughnut id opts data = Native.Chart.doughnut id (encodeDataType2 data) opts
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
