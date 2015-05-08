@@ -10,31 +10,38 @@ Elm.Native.Chart.make = function(localRuntime) {
     var Result = Elm.Result.make(localRuntime);
     var Task = Elm.Native.Task.make(localRuntime);
 
-    function chart(id)
-    {
-        var e = document.getElementById(id).getContext("2d");
-        return new Chart(e);
-    }
+//     function chart(id)
+//     {
+//         var e = document.getElementById(id).getContext("2d");
+//         return new Chart(e);
+//     }
 
-    function line(id, data, options)
+    function attachOn(id)
     {
-        var f = function(e, data, options, callback) {
-            return callback(Task.succeed( new Chart(e.getContext("2d")).Line(JSON.parse(data), options)) );
+        var f = function(e, callback) {
+            return callback(Task.succeed( new Chart(e.getContext("2d"))) );
         };
 
         return Task.asyncFunction(function(callback){
             var e = document.getElementById(id)
             if (e) {
-                f(e, data, options, callback);
+                f(e, callback);
             } else {
                 var mo = new MutationObserver(function(ev){
                     var e = document.getElementById(id)
                     if (e) {
-                        f(e, data, options, callback);
+                        f(e, callback);
                     }
                 });
                 mo.observe(document.body, {childList: true, subtree: true});
             }
+        });
+    }
+
+    function line(chart, data, options)
+    {
+        return Task.asyncFunction(function(callback){
+            return callback(Task.succeed( chart.Line(JSON.parse(data), options)) );
         });
     }
 
@@ -104,25 +111,10 @@ Elm.Native.Chart.make = function(localRuntime) {
         });
     }
 
-    function pie(id, data, options)
+    function pie(chart, data, options)
     {
-        var f = function(e, data, options, callback) {
-            return callback(Task.succeed( new Chart(e.getContext("2d")).Pie(JSON.parse(data), options)) );
-        };
-
         return Task.asyncFunction(function(callback){
-            var e = document.getElementById(id)
-            if (e) {
-                f(e, data, options, callback);
-            } else {
-                var mo = new MutationObserver(function(ev){
-                    var e = document.getElementById(id)
-                    if (e) {
-                        f(e, data, options, callback);
-                    }
-                });
-                mo.observe(document.body, {childList: true, subtree: true});
-            }
+            return callback(Task.succeed( chart.Pie(JSON.parse(data), options)) );
         });
     }
 
@@ -148,19 +140,13 @@ Elm.Native.Chart.make = function(localRuntime) {
         });
     }
 
-    function addData(chart, data, label)
-    {
-        chart.addData(JSON.parse(data), label);
-        return chart;
-    }
-
     return localRuntime.Native.Chart.values = {
+        attachOn : attachOn,
         line : F3(line),
         bar : F3(bar),
         radar : F3(radar),
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
-        addData : F3(addData),
     };
 };

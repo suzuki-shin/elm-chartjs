@@ -1,12 +1,11 @@
 module Chart (
-               line
+               attachOn
+             , line
              , bar
              , radar
              , polarArea
              , pie
              , doughnut
-             , addDataType1
-             , addDataType2
              , Chart
              , DataType1
              , DataType2
@@ -29,12 +28,15 @@ import Task exposing (Task)
 
 type Chart = Chart
 
+attachOn : String -> Task error Chart
+attachOn = Native.Chart.attachOn
+
 {-| Draw line chart and return Task.
 
     lineOn "chart1" { barShowStroke = True } data
 -}
-line : String -> a -> DataType1 -> Task error Chart
-line id opts data = Native.Chart.line id (encodeDataType1 data) opts
+line : a -> DataType1 -> Chart -> Task error Chart
+line opts data chart = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
@@ -61,8 +63,8 @@ polarArea id opts data = Native.Chart.polarArea id (encodeDataType2 data) opts
 
     pie (attachOn "chart1") {} data
 -}
-pie : String -> a -> DataType2 -> Task error Chart
-pie id opts data = Native.Chart.pie id (encodeDataType2 data) opts
+pie : a -> DataType2 -> Chart -> Task error Chart
+pie opts data chart = Native.Chart.pie chart (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
@@ -70,22 +72,6 @@ pie id opts data = Native.Chart.pie id (encodeDataType2 data) opts
 -}
 doughnut : String -> a -> DataType2 -> Task error Chart
 doughnut id opts data = Native.Chart.doughnut id (encodeDataType2 data) opts
-
-{-| Add data to Chart that type is Line, Bar and Radar.
-
-    addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
--}
-addDataType1 : List Int -> String -> Chart -> Chart
-addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
-
-{-| Add data to Chart that type is Polararea, Pie and Doughnut.
-
-    addDataType2 (polarArea (attachOn "chart")) {value = 50, color = "#46BFBD", highlight = "#5AD3D1", label = "Green"}, Nothing
--}
-addDataType2 : DatasetType2 -> Maybe Int -> Chart -> Chart
-addDataType2 data mIdx chart = case mIdx of
-    Just index -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data)) index
-    Nothing -> Native.Chart.addData chart (encode 0 (encodeDatasetType2 data))
 
 encodeDataType1 : DataType1 -> String
 encodeDataType1 { labels, datasets }

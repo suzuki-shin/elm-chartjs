@@ -123,7 +123,7 @@ main = H.div [] [
 --     in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
 
 t1 : Int -> Task error C.Chart
-t1 y = C.line "lineChart" {bezierCurve = False} (data1y (Debug.log "y" y))
+t1 y = C.bar "barChart" {bezierCurve = False} (data1y (Debug.log "y" y))
 
 st1 : Signal (Task error C.Chart)
 st1 = t1 <~ sampleOn Mouse.clicks Mouse.y
@@ -132,9 +132,24 @@ port drawLine : Signal (Task error C.Chart)
 port drawLine = t1 <~ sampleOn Mouse.clicks Mouse.y
 
 port drawChart2 : Task error C.Chart
-port drawChart2 = C.bar "barChart" {} data1
+port drawChart2 = C.attachOn "lineChart" `andThen` (C.line {} data1)
 
-port drawChart3 : Task error C.Chart
-port drawChart3 = C.radar "radarChart" {} data1
+port drawChart2x : Signal (Task error C.Chart)
+port drawChart2x = (\x -> C.attachOn "lineChart" `andThen` (C.line {} (data1y x))) <~ sampleOn Mouse.clicks Mouse.x
+
+chartP : Int -> Task error C.Chart
+chartP v = C.attachOn "pieChart" `andThen` (C.pie {} (hoge data2 v))
+
+port drawChart3 : Signal (Task error C.Chart)
+port drawChart3 = chartP <~ sampleOn Mouse.clicks Mouse.x
+-- port drawChart3 = (\v -> C.attachOn "pieChart" `andThen` (C.pie {} (hoge data2 v))) <~ sampleOn Mouse.clicks Mouse.x
 
 -- port add3 : Signal (Task error C.Chart)
+
+hoge : C.DataType2 -> Int -> C.DataType2
+hoge d v = {
+            value = v
+          , color = "#FBD000"
+          , highlight = "#3D1000"
+          , label = "xkjkfuga"
+          } :: d
