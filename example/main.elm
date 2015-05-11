@@ -1,8 +1,9 @@
 import Chart as C exposing (..)
 import Graphics.Element exposing (show)
 import Json.Encode exposing (..)
-import Signal exposing ((<~), sampleOn)
+import Signal exposing ((<~), sampleOn, constant, map)
 import Mouse
+import Debug
 
 data1 : C.DataType1
 data1 = {
@@ -62,6 +63,7 @@ data2 = [ {
           }
         ]
 
+data1y : Int -> C.DataType1
 data1y x = {
       labels = ["January","February","March","April","May","June","July"],
       datasets = [
@@ -70,7 +72,7 @@ data1y x = {
          strokeColor = "rgba(220,220,220,0.8)",
          highlightFill = "rgba(220,220,220,0.75)",
          highlightStroke = "rgba(220,220,220,1)",
-         data = [30, 34, 67, 12, 96, 75, x],
+         data = [30, 34, 67, 12, 96, 75, (Debug.log "data1y x" x)],
          mLabel = Nothing
        },
        {
@@ -92,6 +94,9 @@ data1y x = {
       ]
     }
 
+-- data1yMouseX : Signal (List C.DatasetType1)
+-- data1yMouseX = datasets1 <~ sampleOn Mouse.clicks Mouse.x
+
 datasetType2a =
     {
       value = 135
@@ -108,11 +113,54 @@ datasetType2b =
     , label = "HOGE"
     }
 
+
+-- updateChart : List C.DatasetType1 -> ()
+-- updateChart ds = C.update c1 (Debug.log "updateChart ds" ds)
+
+-- c1 : C.Chart
+-- c1 = C.line (C.attachOn "lineChart") {bezierCurve = True} data1
+
+-- c2 : Signal C.Chart
+-- c2 = C.line (C.attachOn "lineChart") {bezierCurve = True} <~ data1yMouseX
+
+testX = map show Mouse.x
+
+datasets1 : Int -> (List C.DatasetType1)
+datasets1 x = [
+       {
+         fillColor = "rgba(220,220,220,0.5)",
+         strokeColor = "rgba(220,220,220,0.8)",
+         highlightFill = "rgba(220,220,220,0.75)",
+         highlightStroke = "rgba(220,220,220,1)",
+         data = [30, 34, 67, 12, 96, 75, (Debug.log "datasets1 x" x)],
+         mLabel = Nothing
+       },
+       {
+         fillColor = "rgba(151,187,205,0.5)",
+         strokeColor = "rgba(151,187,205,0.8)",
+         highlightFill = "rgba(151,187,205,0.75)",
+         highlightStroke = "rgba(151,187,205,1)",
+         data = [20, 4, 87, 32, 46, 55, 38],
+         mLabel = Just "xlabel"
+       }
+      ]
+
+-- updateChart : List C.DatasetType1 -> ()
+-- updateChart d = C.update c1 (Debug.log "updateChart datasets1 " d)
+
 main =
     let
         c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
-        c4 = C.radar (C.attachOn "radarChart") {} data1
-        c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
-        c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
-        c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
-    in (\x -> C.line (C.attachOn "lineChart") { bezierCurve = True } (data1y x) |> update |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+--         c4 = C.radar (C.attachOn "radarChart") {} data1
+--         c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
+--         c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
+--         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
+        c7 x = C.line2 "lineChart" { bezierCurve = True } (data1y x)
+    in (\x -> c7 x |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+
+-- main = (\x -> updateChart (datasets1 (Debug.log "main x" x)) |> \_ -> show "kjk") <~ sampleOn Mouse.clicks Mouse.x
+--     (\x -> C.line (C.attachOn "lineChart") {bezierCurve = True} x
+--     testX
+--      |> \_ -> (updateChart << datasets1) <~ sampleOn Mouse.clicks Mouse.x
+--      |> \_ -> show "hoge") <~ data1yMouseX
+
