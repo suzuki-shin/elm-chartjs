@@ -3,7 +3,7 @@ import Graphics.Element exposing (show)
 import Json.Encode exposing (..)
 import Signal exposing ((<~), sampleOn, constant, map)
 import Mouse
-import Debug
+-- import Debug
 
 data1 : C.DataType1
 data1 = {
@@ -72,7 +72,7 @@ data1y x = {
          strokeColor = "rgba(220,220,220,0.8)",
          highlightFill = "rgba(220,220,220,0.75)",
          highlightStroke = "rgba(220,220,220,1)",
-         data = [30, 34, 67, 12, 96, 75, (Debug.log "data1y x" x)],
+         data = [30, 34, 67, 12, 96, 75, x],
          mLabel = Nothing
        },
        {
@@ -132,7 +132,7 @@ datasets1 x = [
          strokeColor = "rgba(220,220,220,0.8)",
          highlightFill = "rgba(220,220,220,0.75)",
          highlightStroke = "rgba(220,220,220,1)",
-         data = [30, 34, 67, 12, 96, 75, (Debug.log "datasets1 x" x)],
+         data = [30, 34, 67, 12, 96, 75, x],
          mLabel = Nothing
        },
        {
@@ -150,13 +150,15 @@ datasets1 x = [
 
 main =
     let
+        c1 = C.line (C.attachOn "lineChart") {} data1
         c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
 --         c4 = C.radar (C.attachOn "radarChart") {} data1
 --         c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
 --         c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
 --         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
-        c7 x = C.line2 "lineChart" { bezierCurve = True } (data1y x)
-    in (\x -> c7 x |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+--         c7 x = C.line2 "lineChart" { bezierCurve = True } (data1y x)
+--     in (\x -> c7 x |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
+    in (\x -> (C.update c1 (0, 2) x) |> \_ -> show "hoge") <~ sampleOn Mouse.isDown Mouse.x
 
 -- main = (\x -> updateChart (datasets1 (Debug.log "main x" x)) |> \_ -> show "kjk") <~ sampleOn Mouse.clicks Mouse.x
 --     (\x -> C.line (C.attachOn "lineChart") {bezierCurve = True} x
