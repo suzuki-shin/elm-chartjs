@@ -21,13 +21,7 @@ Elm.Native.Chart.make = function(localRuntime) {
     function line2(id, options, data)
     {
         var e = document.getElementById(id).getContext("2d");
-// console.log('line2 chartOf');
-// console.log(chartOf);
-
-// console.log('line2 data');
         var dataJson = JSON.parse(data);
-// console.log(dataJson);
-
         if (! chartOf[id]) {
             var c = new Chart(e);
             var chart = c.Line(dataJson, options);
@@ -35,18 +29,10 @@ Elm.Native.Chart.make = function(localRuntime) {
             return chart;
         }
 
-// console.log('line2 update datasets');
-// console.log(dataJson['datasets']);
-
         var len1 = dataJson['datasets'].length;
         for (var i = 0; i < len1; i++) {
             var len2 = dataJson['datasets'][i].data.length;
-//  console.log('len2');
-//  console.log(len2);
             for (var j = 0; j < len2; j++) {
-
-//  console.log(dataJson['datasets'][i].data[j]);
-
                 chartOf[id].datasets[i].points[j].value = dataJson['datasets'][i].data[j];
             }
         }
@@ -123,17 +109,18 @@ console.log(chart);
         return chart.Doughnut(JSON.parse(data), options);
     }
 
-//     function update(chart, datasets)
-//     {
+    function update(chart, datasetsIdx, pointsIdx, value)
+    {
 
-// console.log('update');
-// console.log(chart);
-// console.log(datasets);
-//         if (! datasets) return;
+console.log('update');
+console.log(chart);
+console.log(datasetsIdx);
+console.log(pointsIdx);
+console.log(value);
 
-//         chart.datasets = datasets;
-//         chart.update();
-//     }
+        chart.datasets[datasetsIdx].points[pointsIdx].value = value;
+        chart.update();
+    }
 
     function addData(chart, data, label)
     {
@@ -149,7 +136,7 @@ console.log(chart);
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
-//         update : update,
+        update : F4(update),
         addData : F3(addData),
         line2 : F3(line2),
     };
