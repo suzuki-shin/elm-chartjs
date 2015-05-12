@@ -6,7 +6,7 @@ module Chart ( attachOn
              , polarArea
              , pie
              , doughnut
---              , update
+             , update
              , addDataType1
              , addDataType2
              , Chart
@@ -32,7 +32,7 @@ import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
 import Signal exposing ((<~))
-import Debug
+-- import Debug
 
 type Chart = Chart
 
@@ -45,7 +45,7 @@ attachOn : String -> Chart
 attachOn = Native.Chart.chart
 
 line2 : String -> a -> DataType1 -> Chart
-line2 id opts data = Native.Chart.line2 id opts (encodeDataType1 (Debug.log "line2 data" data))
+line2 id opts data = Native.Chart.line2 id opts (encodeDataType1 data)
 
 draw1 : Chart -> DataType1 -> ()
 draw1 = Native.Chart.draw
@@ -55,7 +55,7 @@ draw1 = Native.Chart.draw
     line (attachOn "chart1") { barShowStroke = True } data
 -}
 line : Chart -> a -> DataType1 -> Chart
-line chart opts data = Native.Chart.line chart (encodeDataType1 (Debug.log "line data" data)) opts
+line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
@@ -96,8 +96,8 @@ doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) op
 
     update chart
 -}
--- update : Chart -> (List DatasetType1) -> ()
--- update = Native.Chart.update
+update : Chart -> (Int, Int) -> Int -> ()
+update chart (datasetsIdx, pointsIdx) value = Native.Chart.update chart datasetsIdx pointsIdx value
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
