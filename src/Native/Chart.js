@@ -7,7 +7,9 @@ Elm.Native.Chart.make = function(localRuntime) {
         return localRuntime.Native.Chart.values;
     }
 
+    var Task = Elm.Native.Task.make(localRuntime);
     var Result = Elm.Result.make(localRuntime);
+    var Utils = Elm.Native.Utils.make(localRuntime);
 
     var chartOf = {};
 
@@ -86,6 +88,8 @@ console.log(chart);
 
     function bar(chart, data, options)
     {
+console.log('function bar');
+
         return chart.Bar(JSON.parse(data), options);
     }
 
@@ -111,15 +115,24 @@ console.log(chart);
 
     function update(chart, datasetsIdx, pointsIdx, value)
     {
+ console.log('update');
 
-console.log('update');
-console.log(chart);
-console.log(datasetsIdx);
-console.log(pointsIdx);
-console.log(value);
+        return Task.asyncFunction(function(callback){
 
-        chart.datasets[datasetsIdx].points[pointsIdx].value = value;
-        chart.update();
+ console.log('update task');
+ console.log(chart);
+ console.log(datasetsIdx);
+ console.log(pointsIdx);
+ console.log(value);
+
+            if (! value) return callback(Task.succeed(Utils.Tuple0));
+
+            chart.datasets[datasetsIdx].points[pointsIdx].value = value;
+            chart.update();
+
+            return callback(Task.succeed(Utils.Tuple0));
+        });
+
     }
 
     function addData(chart, data, label)
