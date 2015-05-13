@@ -55,8 +55,8 @@ draw1 = Native.Chart.draw
 
     line (attachOn "chart1") { barShowStroke = True } data
 -}
-line : Chart -> a -> DataType1 -> Chart
-line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
+line : String -> a -> DataType1 -> Task String Chart
+line id opts data = Native.Chart.line id (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
