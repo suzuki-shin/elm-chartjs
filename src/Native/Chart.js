@@ -89,12 +89,9 @@ Elm.Native.Chart.make = function(localRuntime) {
     function line(id, data, options)
     {
         return Task.asyncFunction(function(callback){
-            if (chartOf[id]) return callback(Task.succeed(chartOf[id]));
-
-            chartOf[id] = chart(id).Line(JSON.parse(data), options);
+            if (! chartOf[id]) chartOf[id] = chart(id).Line(JSON.parse(data), options);
             return callback(Task.succeed(chartOf[id]));
         });
-
     }
 
     function bar(chart, data, options)
