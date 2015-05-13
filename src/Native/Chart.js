@@ -52,38 +52,49 @@ Elm.Native.Chart.make = function(localRuntime) {
         }
     }
 
-    function line(chart, data, options)
+//     function line(chart, data, options)
+//     {
+// console.log('function line');
+// console.log('chart');
+// console.log(chart);
+// console.log('data');
+// console.log(data);
+
+//         if (! chart.__data) {
+//             var c = chart.Line(JSON.parse(data), options);
+
+//  console.log('c');
+//  console.log(c);
+
+//             return c;
+//         }
+
+//         if (chart.__data['datasets'] === data['datasets']) {
+//             return chart;
+//         }
+
+//         chart.__data = JSON.parse(data);
+
+// console.log('chart 2');
+// console.log(chart);
+
+//         chart.datasets = data['datasets'];
+//         chart.update();
+
+//         return chart;
+
+// //         return chart.Line(JSON.parse(data), options);
+//     }
+
+    function line(id, data, options)
     {
-console.log('function line');
-console.log('chart');
-console.log(chart);
-console.log('data');
-console.log(data);
+        return Task.asyncFunction(function(callback){
+            if (chartOf[id]) return callback(Task.succeed(chartOf[id]));
 
-        if (! chart.__data) {
-            var c = chart.Line(JSON.parse(data), options);
+            chartOf[id] = chart(id).Line(JSON.parse(data), options);
+            return callback(Task.succeed(chartOf[id]));
+        });
 
- console.log('c');
- console.log(c);
-
-            return c;
-        }
-
-        if (chart.__data['datasets'] === data['datasets']) {
-            return chart;
-        }
-
-        chart.__data = JSON.parse(data);
-
-console.log('chart 2');
-console.log(chart);
-
-        chart.datasets = data['datasets'];
-        chart.update();
-
-        return chart;
-
-//         return chart.Line(JSON.parse(data), options);
     }
 
     function bar(chart, data, options)
@@ -115,15 +126,15 @@ console.log('function bar');
 
     function update(chart, datasetsIdx, pointsIdx, value)
     {
- console.log('update');
+//  console.log('update');
 
         return Task.asyncFunction(function(callback){
 
- console.log('update task');
- console.log(chart);
- console.log(datasetsIdx);
- console.log(pointsIdx);
- console.log(value);
+//  console.log('update task');
+//  console.log(chart);
+//  console.log(datasetsIdx);
+//  console.log(pointsIdx);
+//  console.log(value);
 
             if (! value) return callback(Task.succeed(Utils.Tuple0));
 
