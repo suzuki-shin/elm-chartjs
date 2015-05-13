@@ -3,6 +3,7 @@ import Graphics.Element exposing (show)
 import Json.Encode exposing (..)
 import Signal exposing ((<~), sampleOn, constant, map)
 import Mouse
+import Task exposing (Task)
 -- import Debug
 
 data1 : C.DataType1
@@ -148,17 +149,21 @@ datasets1 x = [
 -- updateChart : List C.DatasetType1 -> ()
 -- updateChart d = C.update c1 (Debug.log "updateChart datasets1 " d)
 
+c2 : C.Chart
+c2 = C.line (C.attachOn "lineChart") {} data1
+
 main =
     let
-        c1 = C.line (C.attachOn "lineChart") {} data1
-        c2 = C.bar (C.attachOn "barChart") {} data1 |> addDataType1 [100, 39] "Aug"
+        c1 = C.bar (C.attachOn "barChart") {} data1
 --         c4 = C.radar (C.attachOn "radarChart") {} data1
 --         c3 = C.polarArea (C.attachOn "polarAreaChart") {} data2 |> addDataType2 datasetType2a (Just 2)
 --         c5 = C.pie (C.attachOn "pieChart") {} data2 |> addDataType2 datasetType2a Nothing |> addDataType2 datasetType2b Nothing
 --         c6 = C.doughnut (C.attachOn "doughnutChart") {} data2
 --         c7 x = C.line2 "lineChart" { bezierCurve = True } (data1y x)
 --     in (\x -> c7 x |> \_ -> show x) <~ sampleOn Mouse.isDown Mouse.x
-    in (\x -> (C.update c1 (0, 2) x) |> \_ -> show "hoge") <~ sampleOn Mouse.isDown Mouse.x
+       in show "ho ho"
+--     in (\x -> (C.update c2 (0, 2) x) |> \_ -> show "hoge") <~ sampleOn Mouse.isDown Mouse.x
+--     in (\x -> (C.update c1 (0, 2) x) |> \_ -> show "hoge") <~ sampleOn Mouse.isDown Mouse.x
 
 -- main = (\x -> updateChart (datasets1 (Debug.log "main x" x)) |> \_ -> show "kjk") <~ sampleOn Mouse.clicks Mouse.x
 --     (\x -> C.line (C.attachOn "lineChart") {bezierCurve = True} x
@@ -166,3 +171,5 @@ main =
 --      |> \_ -> (updateChart << datasets1) <~ sampleOn Mouse.clicks Mouse.x
 --      |> \_ -> show "hoge") <~ data1yMouseX
 
+port updateChart : Signal (Task String ())
+port updateChart = (\x -> (C.update c2 (0, 2) x)) <~ sampleOn Mouse.isDown Mouse.x
