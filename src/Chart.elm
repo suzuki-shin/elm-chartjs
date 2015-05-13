@@ -32,6 +32,7 @@ import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
 import Signal exposing ((<~))
+import Task exposing (Task)
 -- import Debug
 
 type Chart = Chart
@@ -96,7 +97,7 @@ doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) op
 
     update chart
 -}
-update : Chart -> (Int, Int) -> Int -> ()
+update : Chart -> (Int, Int) -> Int -> Task String ()
 update chart (datasetsIdx, pointsIdx) value = Native.Chart.update chart datasetsIdx pointsIdx value
 
 {-| Add data to Chart that type is Line, Bar and Radar.
