@@ -19,91 +19,45 @@ Elm.Native.Chart.make = function(localRuntime) {
         return new Chart(e);
     }
 
-
-    function line2(id, options, data)
-    {
-        var e = document.getElementById(id).getContext("2d");
-        var dataJson = JSON.parse(data);
-        if (! chartOf[id]) {
-            var c = new Chart(e);
-            var chart = c.Line(dataJson, options);
-            chartOf[id] = chart;
-            return chart;
-        }
-
-        var len1 = dataJson['datasets'].length;
-        for (var i = 0; i < len1; i++) {
-            var len2 = dataJson['datasets'][i].data.length;
-            for (var j = 0; j < len2; j++) {
-                chartOf[id].datasets[i].points[j].value = dataJson['datasets'][i].data[j];
-            }
-        }
-
-        chartOf[id].update();
-
-        return chartOf[id];
-    }
-
-    function draw(chart, options, data)
-    {
-        switch (chart.__chartType) {
-        case 'line': return chart.Line(JSON.parse(data), options);
-        default: console.log('draw default');
-        }
-    }
-
-//     function line(chart, data, options)
-//     {
-// console.log('function line');
-// console.log('chart');
-// console.log(chart);
-// console.log('data');
-// console.log(data);
-
-//         if (! chart.__data) {
-//             var c = chart.Line(JSON.parse(data), options);
-
-//  console.log('c');
-//  console.log(c);
-
-//             return c;
-//         }
-
-//         if (chart.__data['datasets'] === data['datasets']) {
-//             return chart;
-//         }
-
-//         chart.__data = JSON.parse(data);
-
-// console.log('chart 2');
-// console.log(chart);
-
-//         chart.datasets = data['datasets'];
-//         chart.update();
-
-//         return chart;
-
-// //         return chart.Line(JSON.parse(data), options);
-//     }
-
     function line(id, data, options)
     {
         return Task.asyncFunction(function(callback){
-            if (! chartOf[id]) chartOf[id] = chart(id).Line(JSON.parse(data), options);
-            return callback(Task.succeed(chartOf[id]));
+
+            if (chartOf[id]) return callback( Task.succeed(chartOf[id] ) );
+
+            var e = document.getElementById(id)
+            if (e) {
+                var chart = new Chart(e.getContext("2d"));
+                chartOf[id] = chart.Line(JSON.parse(data), options);
+                return callback( Task.succeed(chartOf[id] ) );
+            } else {
+                var mo = new MutationObserver(function(ev){
+                    var e = document.getElementById(id)
+                    if (e) {
+                        var chart = new Chart(e.getContext("2d"));
+                        chartOf[id] = chart.Line(JSON.parse(data), options);
+                        return callback( Task.succeed(chartOf[id] ) );
+                    }
+                });
+                mo.observe(document.body, {childList: true, subtree: true});
+            }
         });
     }
 
-    function bar(chart, data, options)
+    function bar(id, data, options)
     {
-console.log('function bar');
-
-        return chart.Bar(JSON.parse(data), options);
+        return Task.asyncFunction(function(callback){
+            if (! chartOf[id]) chartOf[id] = chart(id).Bar(JSON.parse(data), options);
+            return callback( Task.succeed(chartOf[id] ) );
+        });
     }
 
-    function radar(chart, data, options)
+    function radar(id, data, options)
     {
-        return chart.Radar(JSON.parse(data), options);
+        return Task.asyncFunction(function(callback){
+            if (! chartOf[id]) chartOf[id] = chart(id).Radar(JSON.parse(data), options);
+            return callback( Task.succeed(chartOf[id] ) );
+        });
     }
 
     function polarArea(chart, data, options)
@@ -121,18 +75,9 @@ console.log('function bar');
         return chart.Doughnut(JSON.parse(data), options);
     }
 
-    function update(chart, datasetsIdx, pointsIdx, value)
+    function updatePoint(chart, datasetsIdx, pointsIdx, value)
     {
-//  console.log('update');
-
         return Task.asyncFunction(function(callback){
-
-//  console.log('update task');
-//  console.log(chart);
-//  console.log(datasetsIdx);
-//  console.log(pointsIdx);
-//  console.log(value);
-
             if (! value) return callback(Task.succeed(Utils.Tuple0));
 
             chart.datasets[datasetsIdx].points[pointsIdx].value = value;
@@ -140,7 +85,30 @@ console.log('function bar');
 
             return callback(Task.succeed(Utils.Tuple0));
         });
+    }
 
+    function updateBar(chart, datasetsIdx, barsIdx, value)
+    {
+        return Task.asyncFunction(function(callback){
+            if (! value) return callback(Task.succeed(Utils.Tuple0));
+
+            chart.datasets[datasetsIdx].bars[barsIdx].value = value;
+            chart.update();
+
+            return callback(Task.succeed(Utils.Tuple0));
+        });
+    }
+
+    function updateSegment(chart, segmentsIdx, value)
+    {
+        return Task.asyncFunction(function(callback){
+            if (! value) return callback(Task.succeed(Utils.Tuple0));
+
+            chart.segments[segmentsIdx].value = value;
+            chart.update();
+
+            return callback(Task.succeed(Utils.Tuple0));
+        });
     }
 
     function addData(chart, data, label)
@@ -150,16 +118,16 @@ console.log('function bar');
     }
 
     return localRuntime.Native.Chart.values = {
-        chart : chart,
         line : F3(line),
         bar : F3(bar),
         radar : F3(radar),
         polarArea : F3(polarArea),
         pie : F3(pie),
         doughnut : F3(doughnut),
-        update : F4(update),
+        updatePoint : F4(updatePoint),
+        updateBar : F4(updateBar),
+        updateSegment : F3(updateSegment),
         addData : F3(addData),
-        line2 : F3(line2),
     };
 
 };
