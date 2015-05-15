@@ -23,24 +23,23 @@ Elm.Native.Chart.make = function(localRuntime) {
     {
         return Task.asyncFunction(function(callback){
 
-            if (chartOf[id]) return callback( Task.succeed(chartOf[id] ) );
-
-            var e = document.getElementById(id)
-            if (e) {
+            var f = function(id, e) {
                 var chart = new Chart(e.getContext("2d"));
                 chartOf[id] = chart.Line(JSON.parse(data), options);
                 return callback( Task.succeed(chartOf[id] ) );
-            } else {
-                var mo = new MutationObserver(function(ev){
-                    var e = document.getElementById(id)
-                    if (e) {
-                        var chart = new Chart(e.getContext("2d"));
-                        chartOf[id] = chart.Line(JSON.parse(data), options);
-                        return callback( Task.succeed(chartOf[id] ) );
-                    }
-                });
-                mo.observe(document.body, {childList: true, subtree: true});
-            }
+            };
+
+            if (chartOf[id]) return callback( Task.succeed(chartOf[id] ) );
+
+            var e = document.getElementById(id)
+            if (e) return f(id, e);
+
+            var mo = new MutationObserver(function(ev){
+                var e = document.getElementById(id)
+                if (e) return f(id, e);
+            });
+            mo.observe(document.body, {childList: true, subtree: true});
+
         });
     }
 
