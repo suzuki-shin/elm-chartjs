@@ -64,22 +64,22 @@ radar id opts data = Native.Chart.radar id (encodeDataType1 data) opts
 
     polarArea (attachOn "chart1") { scaleShowLine = True }data
 -}
-polarArea : Chart -> a -> DataType2 -> Chart
-polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
+polarArea : String -> a -> DataType2 -> Task String Chart
+polarArea id opts data = Native.Chart.polarArea id (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
     pie (attachOn "chart1") {} data
 -}
-pie : Chart -> a -> DataType2 -> Chart
-pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
+pie : String -> a -> DataType2 -> Task String Chart
+pie id opts data = Native.Chart.pie id (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
     doughnut (attachOn "chart1") {} data
 -}
-doughnut : Chart -> a -> DataType2 -> Chart
-doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
+doughnut : String -> a -> DataType2 -> Chart
+doughnut id opts data = Native.Chart.doughnut id (encodeDataType2 data) opts
 
 {-| Re-render Chart.
 
@@ -107,8 +107,8 @@ updatePolarArea = updatePie
 
     addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
 -}
-addDataType1 : List Int -> String -> Chart -> Chart
-addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
+addDataType1 : Chart -> List Int -> String -> Task String ()
+addDataType1 chart data label = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
