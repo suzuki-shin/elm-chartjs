@@ -1,21 +1,25 @@
-module Chart ( attachOn
-             , line
+module Chart (
+               line
              , bar
              , radar
              , polarArea
              , pie
              , doughnut
-             , update
+             , updateLine
+             , updateBar
+             , updateRadar
+             , updatePie
+             , updateDoughnut
+             , updatePolarArea
              , addDataType1
              , addDataType2
+             , Chart
              , DataType1
+             , DatasetType1
              , DataType2
              ) where
 
 {-| This module is bindings for Chart.js
-
-# Create Chart Object
-@docs attachOn
 
 # Draw Chart
 @docs line, bar, radar, polarArea, pie, doughnut
@@ -28,73 +32,82 @@ module Chart ( attachOn
 import Native.Chart exposing (..)
 import Json.Encode exposing (..)
 import List as L exposing (..)
+import Signal exposing ((<~))
+import Task exposing (Task)
+import Debug
 
-type ChartObj = ChartObj
 type Chart = Chart
-
-{-| Create Chart object.
-Create chart object and attach chart on element selected by id.
-
-    attachOn "chart1"
--}
-attachOn : String -> ChartObj
-attachOn = Native.Chart.chart
 
 {-| Draw line chart.
 
     line (attachOn "chart1") { barShowStroke = True } data
 -}
-line : ChartObj -> a -> DataType1 -> Chart
-line chart opts data = Native.Chart.line chart (encodeDataType1 data) opts
+line : String -> a -> DataType1 -> Task String Chart
+line id opts data = Native.Chart.line id (encodeDataType1 data) opts
 
 {-| Draw bar chart.
 
     bar (attachOn "chart1") { barShowStroke = True } data
 -}
-bar : ChartObj -> a -> DataType1 -> Chart
-bar chart opts data = Native.Chart.bar chart (encodeDataType1 data) opts
+bar : String -> a -> DataType1 -> Task String Chart
+bar id opts data = Native.Chart.bar id (encodeDataType1 data) opts
 
 {-| Draw radar chart.
 
     radar (attachOn "chart1") { pointDot = False, angleLineWidth = 1 } data
 -}
-radar : ChartObj -> a -> DataType1 -> Chart
-radar chart opts data = Native.Chart.radar chart (encodeDataType1 data) opts
+radar : String -> a -> DataType1 -> Task String Chart
+radar id opts data = Native.Chart.radar id (encodeDataType1 data) opts
 
 {-| Draw polarArea chart.
 
     polarArea (attachOn "chart1") { scaleShowLine = True }data
 -}
-polarArea : ChartObj -> a -> DataType2 -> Chart
-polarArea chart opts data = Native.Chart.polarArea chart (encodeDataType2 data) opts
+polarArea : String -> a -> DataType2 -> Task String Chart
+polarArea id opts data = Native.Chart.polarArea id (encodeDataType2 data) opts
 
 {-| Draw pie chart.
 
     pie (attachOn "chart1") {} data
 -}
-pie : ChartObj -> a -> DataType2 -> Chart
-pie chart opts data = Native.Chart.pie chart (encodeDataType2 data) opts
+pie : String -> a -> DataType2 -> Task String Chart
+pie id opts data = Native.Chart.pie id (encodeDataType2 data) opts
 
 {-| Draw doughnut chart.
 
     doughnut (attachOn "chart1") {} data
 -}
-doughnut : ChartObj -> a -> DataType2 -> Chart
-doughnut chart opts data = Native.Chart.doughnut chart (encodeDataType2 data) opts
+doughnut : String -> a -> DataType2 -> Chart
+doughnut id opts data = Native.Chart.doughnut id (encodeDataType2 data) opts
 
 {-| Re-render Chart.
 
     update chart
 -}
-update : Chart -> Chart
-update = Native.Chart.update
+updateLine : Chart -> (Int, Int) -> Int -> Task String ()
+updateLine chart (datasetsIdx, pointsIdx) value = Native.Chart.updatePoint chart datasetsIdx pointsIdx value
+
+updateRadar : Chart -> (Int, Int) -> Int -> Task String ()
+updateRadar = updateLine
+
+updateBar : Chart -> (Int, Int) -> Int -> Task String ()
+updateBar chart (datasetsIdx, barsIdx) value = Native.Chart.updateBar chart datasetsIdx barsIdx value
+
+updatePie : Chart -> Int -> Int -> Task String ()
+updatePie chart segmentsIdx value = Native.Chart.updateSegment chart segmentsIdx value
+
+updateDoughnut : Chart -> Int -> Int -> Task String ()
+updateDoughnut = updatePie
+
+updatePolarArea : Chart -> Int -> Int -> Task String ()
+updatePolarArea = updatePie
 
 {-| Add data to Chart that type is Line, Bar and Radar.
 
     addDataType1 (line (attachOn "chart")) [10, 20] "newLabel"
 -}
-addDataType1 : List Int -> String -> Chart -> Chart
-addDataType1 data label chart = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
+addDataType1 : Chart -> List Int -> String -> Task String ()
+addDataType1 chart data label = Native.Chart.addData chart (encode 0 (list (L.map int data))) label
 
 {-| Add data to Chart that type is Polararea, Pie and Doughnut.
 
@@ -110,8 +123,8 @@ encodeDataType1 { labels, datasets }
     = let encodeLabels : List String -> Value
           encodeLabels = list << L.map string
 
-          encodeDataTypeset1 : DataTypeset1 -> Value
-          encodeDataTypeset1 { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
+          encodeDatasetType1 : DatasetType1 -> Value
+          encodeDatasetType1 { fillColor, strokeColor, highlightFill, highlightStroke, data, mLabel }
               = let ds : List (String, Value)
                     ds = [
                       ("fillColor", string fillColor)
@@ -126,7 +139,7 @@ encodeDataType1 { labels, datasets }
 
       in encode 0 <| object [
          ("labels", encodeLabels labels)
-       , ("datasets", list <| L.map encodeDataTypeset1 datasets)
+       , ("datasets", list <| L.map encodeDatasetType1 datasets)
       ]
 
 encodeDataType2 : DataType2 -> String
@@ -169,10 +182,10 @@ encodeDatasetType2 { value, color, highlight, label }
 -}
 type alias DataType1 = {
       labels : List String
-    , datasets : List DataTypeset1
+    , datasets : List DatasetType1
     }
 
-type alias DataTypeset1 = {
+type alias DatasetType1 = {
       fillColor : String
     , strokeColor : String
     , highlightFill : String
