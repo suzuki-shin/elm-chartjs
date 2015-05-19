@@ -36,7 +36,6 @@ import Signal exposing ((<~))
 import Task exposing (Task)
 import Debug
 
-type ChartType = Line | Bar | Radar | PolarArea | Pie | Doughnut
 type Chart = Chart
 
 {-| Draw line chart.
